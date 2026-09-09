@@ -236,26 +236,81 @@
     } catch (e) { return 0; }
   }
 
+  var CODE_KEY = "bishun_code";
   var rosterLoaded = false;
-  async function startWho() {   // 首次进入：读名单（可能弹一次代码输入框）
+
+  function urlCode() {
+    try { return (new URLSearchParams(window.location.search).get("code") || "").trim(); }
+    catch (e) { return ""; }
+  }
+  function savedCode() {
+    try { return localStorage.getItem(CODE_KEY) || localStorage.getItem("kelasku_class_code") || ""; }
+    catch (e) { return ""; }
+  }
+  function saveCode(c) { try { localStorage.setItem(CODE_KEY, c); } catch (e) {} }
+
+  // 只对「网络请求」计时，绝不把等学生打字的时间算进去
+  async function loadRoster(code) {
+    if (!HAS_DB || !code) return [];
+    try { return (await withTimeout(ClassCode.load(code), 12000)) || []; }
+    catch (e) { return []; }
+  }
+
+  async function startWho() {
     show("who");
     $("#whoGrid").innerHTML = "";
     $("#whoManual").hidden = true;
-    $("#whoSub").textContent = "正在读班级名单…";
+    $("#whoCode").hidden = true;
     $("#whoFoot").textContent = "";
-    if (HAS_DB) {
-      try { roster = await withTimeout(ClassCode.loadOrPrompt(), 15000); }
-      catch (e) { roster = []; }
-    } else { roster = []; }
+
+    var code = urlCode() || savedCode();
+    if (HAS_DB && code) {
+      $("#whoSub").textContent = "正在读班级名单…";
+      roster = await loadRoster(code);
+      if (roster.length > 0) { saveCode(code.toUpperCase()); rosterLoaded = true; renderNameGrid(); return; }
+    }
     rosterLoaded = true;
-    renderWho();
+    renderCodeEntry(code);   // 没代码 / 读不到 → 让学生输代码（不计时）
   }
-  function showWho(fetchAgain) {  // 「换人」：不重新弹代码框，用已读到的名单
+
+  function renderCodeEntry(prefill) {
+    show("who");
+    $("#whoGrid").innerHTML = "";
+    $("#whoManual").hidden = true;
+    $("#whoFoot").textContent = "";
+    $("#whoSub").textContent = HAS_DB ? "输入老师给的班级代码" : "打上你的名字就可以开始";
+    if (!HAS_DB) { $("#whoCode").hidden = true; $("#whoManual").hidden = false; $("#whoInput").placeholder = "打上你的名字"; return; }
+    $("#whoCode").hidden = false;
+    $("#whoCodeInput").value = (prefill || "").toUpperCase();
+    setTimeout(function () { $("#whoCodeInput").focus(); }, 50);
+  }
+
+  async function submitCode() {
+    var c = ($("#whoCodeInput").value || "").trim().toUpperCase();
+    if (!c) { $("#whoCodeInput").focus(); return; }
+    var btn = $("#whoCodeBtn");
+    btn.disabled = true;
+    $("#whoSub").textContent = "正在读班级名单…";
+    roster = await loadRoster(c);
+    btn.disabled = false;
+    if (roster.length > 0) { saveCode(c); renderNameGrid(); }
+    else { $("#whoSub").textContent = "找不到「" + c + "」这个班级，检查一下，或按下面「跳过」"; }
+  }
+  $("#whoCodeBtn").addEventListener("click", submitCode);
+  $("#whoCodeInput").addEventListener("keydown", function (e) { if (e.key === "Enter") submitCode(); });
+  $("#whoCodeSkip").addEventListener("click", function () {
+    roster = []; try { localStorage.removeItem(CODE_KEY); } catch (e) {}
+    renderNameGrid();
+  });
+
+  function showWho(fetchAgain) {  // 「换人」：用已读到的名单，不重新问代码
     if (fetchAgain || !rosterLoaded) { startWho(); return; }
     show("who");
-    renderWho();
+    renderNameGrid();
   }
-  function renderWho() {
+
+  function renderNameGrid() {
+    $("#whoCode").hidden = true;
     $("#whoGrid").innerHTML = "";
     $("#whoInput").value = "";
     if (roster.length > 0) {
@@ -264,7 +319,7 @@
         [].concat.apply([], roster.map(function (r) { return r.className; }))
           .filter(function (v, i, a) { return a.indexOf(v) === i; }).join(" / ");
       renderWhoGrid();
-      var m = $("#whoManual"); m.hidden = false;
+      $("#whoManual").hidden = false;
       $("#whoInput").placeholder = "名单上没有你？打上名字";
     } else {
       $("#whoSub").textContent = "打上你的名字就可以开始";

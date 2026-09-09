@@ -25,7 +25,16 @@
     <h1 class="brand">一年级写字</h1>
     <p class="brand-sub" id="whoSub">先点一下你的名字</p>
   </header>
+
+  <!-- 输入班级代码（读不到名单时才出现，没有超时） -->
+  <div class="who-code" id="whoCode" hidden>
+    <input type="text" id="whoCodeInput" placeholder="班级代码，例如 JBC1037-1I" maxlength="24" autocomplete="off" autocapitalize="characters">
+    <button type="button" id="whoCodeBtn">看名单</button>
+    <button type="button" id="whoCodeSkip" class="linkish">跳过，直接打名字</button>
+  </div>
+
   <div class="who-grid" id="whoGrid"></div>
+
   <div class="who-manual" id="whoManual" hidden>
     <input type="text" id="whoInput" placeholder="打上你的名字" maxlength="20" autocomplete="off">
     <button type="button" id="whoGoBtn">开始</button>

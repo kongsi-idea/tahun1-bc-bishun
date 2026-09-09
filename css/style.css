@@ -22,9 +22,11 @@
   --grid:#E3A79C; --grid-strong:#D6897C;
 
   --r-lg:26px; --r-md:18px; --r-sm:12px;
+  /* ZCOOL KuaiLe 字库有限，只用在我自己写死的标题短句；名字/生字一律走 Noto（全字库覆盖） */
   --font-hei:"ZCOOL KuaiLe","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
   --font-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
-  --font-brush:"Ma Shan Zheng","ZCOOL KuaiLe",serif;
+  --font-name:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-brush:"Noto Serif SC","Songti SC","SimSun",serif;
   --font-num:"Baloo 2","Noto Sans SC",sans-serif;
 }
 
@@ -152,7 +154,7 @@ body{
 }
 .who-name{
   cursor:pointer;border:none;padding:16px 12px;border-radius:var(--r-md);
-  font-family:var(--font-hei);font-size:19px;color:var(--ink);
+  font-family:var(--font-name);font-weight:700;font-size:18px;color:var(--ink);
   background:linear-gradient(180deg,var(--paper-1),var(--paper-2) 78%,var(--paper-3));
   box-shadow:0 2px 3px rgba(60,40,20,.16), 0 9px 20px rgba(60,40,20,.13), inset 0 0 0 2px rgba(255,255,255,.5), inset 0 0 0 4px rgba(95,143,110,.26);
   transition:transform .12s;
@@ -305,6 +307,21 @@ body{
   60%{opacity:1;transform:scale(.92) rotate(6deg)}
   100%{opacity:1;transform:scale(1) rotate(8deg)}
 }
+
+/* ---------- 听读音按钮 ---------- */
+.say-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  border:none;cursor:pointer;margin-top:2px;
+  font-family:var(--font-hei);font-size:16px;color:#5a3c05;
+  padding:10px 22px;border-radius:999px;
+  background:linear-gradient(180deg,var(--gold-2),var(--gold-1));
+  box-shadow:0 4px 0 var(--gold-3), 0 10px 18px rgba(228,178,76,.4);
+  transition:transform .1s;
+}
+.say-btn span{font-size:19px;line-height:1}
+.say-btn:active{transform:translateY(2px)}
+.say-btn.saying{animation:sayPulse .6s ease-in-out infinite}
+@keyframes sayPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 
 /* ---------- 练习页按钮 ---------- */
 .practice-actions{

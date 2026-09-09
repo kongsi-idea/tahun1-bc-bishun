@@ -82,6 +82,41 @@
     };
   })();
 
+  /* ---------- 读音（浏览器内建语音，无需网络/密钥） ---------- */
+  var Say = (function () {
+    var synth = window.speechSynthesis || null;
+    var voice = null, ready = false;
+    function pickVoice() {
+      if (!synth) return;
+      var vs = synth.getVoices() || [];
+      voice = vs.filter(function (v) { return /^zh(-|_|$)|Chinese|中文|普通话|國語|Mandarin/i.test(v.lang + " " + v.name); })
+                 .sort(function (a, b) { return (/zh-CN|zh_CN|Hans/i.test(a.lang) ? -1 : 0) - (/zh-CN|zh_CN|Hans/i.test(b.lang) ? -1 : 0); })[0] || null;
+      ready = true;
+    }
+    if (synth) {
+      pickVoice();
+      if (synth.onvoiceschanged !== undefined) synth.addEventListener("voiceschanged", pickVoice);
+    }
+    return {
+      available: function () { return !!synth; },
+      speak: function (text, onStart, onEnd) {
+        if (!synth) { onEnd && onEnd(); return; }
+        try {
+          synth.cancel();
+          var u = new SpeechSynthesisUtterance(text);
+          u.lang = (voice && voice.lang) || "zh-CN";
+          if (voice) u.voice = voice;
+          u.rate = 0.6; u.pitch = 1.05;
+          if (onStart) u.onstart = onStart;
+          u.onend = function () { onEnd && onEnd(); };
+          u.onerror = function () { onEnd && onEnd(); };
+          synth.speak(u);
+        } catch (e) { onEnd && onEnd(); }
+      },
+      stop: function () { if (synth) try { synth.cancel(); } catch (e) {} }
+    };
+  })();
+
   /* ---------- DOM ---------- */
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var screens = {
@@ -295,6 +330,7 @@
   document.querySelectorAll("[data-go]").forEach(function (b) {
     b.addEventListener("click", function () {
       var g = b.getAttribute("data-go");
+      if (typeof Say !== "undefined") Say.stop();
       if (writer) { try { writer.cancelQuiz(); } catch (e) {} }
       if (g === "home") renderHome();
       else if (g === "unit" && curUnit) openUnit(curUnit.id);
@@ -307,6 +343,18 @@
   var tianEl = $("#tianGrid"), targetEl = $("#writerTarget");
   var coachEl = $("#coachText"), actionsEl = $("#practiceActions"), stampEl = $("#stamp");
   var stepBtns = document.querySelectorAll("#stepTabs .step");
+  var sayBtn = $("#sayBtn");
+
+  function sayChar(ch, auto) {
+    if (!Say.available()) { sayBtn.hidden = true; return; }
+    sayBtn.hidden = false;
+    if (auto && Sfx.isMuted()) return;   // 自动读音跟着静音开关；手动按永远会响
+    sayBtn.classList.add("saying");
+    Say.speak(ch, null, function () { sayBtn.classList.remove("saying"); });
+  }
+  sayBtn.addEventListener("click", function () {
+    if (curUnit && curUnit.chars[curIdx]) sayChar(curUnit.chars[curIdx], false);
+  });
 
   var COLORS = {
     stroke: "#39322B", outline: "#B4A892", drawing: "#C24238", highlight: "#5F8F6E"
@@ -350,6 +398,8 @@
     var ch = curUnit.chars[curIdx];
     stampEl.hidden = true;
     setStepUI();
+    Say.stop(); sayBtn.classList.remove("saying");
+    sayBtn.hidden = !Say.available();
     var strokeCount = (HW[ch] && HW[ch].strokes) ? HW[ch].strokes.length : 0;
     $("#practiceStrokes").textContent = "共 " + strokeCount + " 笔";
     if (writer) { try { writer.cancelQuiz(); } catch (e) {} }
@@ -357,7 +407,11 @@
     if (curStep === "watch") {
       writer = makeWriter(ch, { showCharacter: false, showOutline: true });
       coachEl.innerHTML = "先看一遍：这个字有 <b>" + strokeCount + "</b> 笔。";
-      setTimeout(function () { writer.animateCharacter(); }, 300);
+      setTimeout(function () {
+        var p = writer.animateCharacter();
+        var after = function () { sayChar(ch, true); };   // 笔顺演示完自动读音
+        if (p && p.then) p.then(after, after); else setTimeout(after, strokeCount * 900 + 600);
+      }, 300);
       actionsEl.innerHTML = "";
       addBtn("再看一次", "", function () { writer.animateCharacter(); });
       addBtn("下一步：描一描 →", "primary", function () { curStep = "trace"; loadStep(); });

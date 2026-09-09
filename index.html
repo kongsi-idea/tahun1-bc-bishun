@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>一起写好字 · 一年级习写生字</title>
+<title>一年级写字 · 习写生字笔顺</title>
 <meta name="description" content="跟着笔顺，一笔一笔把一年级华文的习写生字写好。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23FBF5E6'/%3E%3Crect x='14' y='14' width='72' height='72' rx='8' fill='none' stroke='%23E3A79C' stroke-width='3'/%3E%3Cline x1='50' y1='14' x2='50' y2='86' stroke='%23E3A79C' stroke-width='2'/%3E%3Cline x1='14' y1='50' x2='86' y2='50' stroke='%23E3A79C' stroke-width='2'/%3E%3Ctext x='50' y='50' font-size='58' text-anchor='middle' dominant-baseline='central' fill='%2339322B' font-family='serif'%3E字%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Baloo+2:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@500;700;900&family=Baloo+2:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
 <!-- ========== 选名字 ========== -->
 <main id="screen-who" class="screen" hidden>
   <header class="home-head">
-    <h1 class="brand">一起写好字</h1>
+    <h1 class="brand">一年级写字</h1>
     <p class="brand-sub" id="whoSub">先点一下你的名字</p>
   </header>
   <div class="who-grid" id="whoGrid"></div>
@@ -36,7 +36,7 @@
 <!-- ========== 首页：选单元 ========== -->
 <main id="screen-home" class="screen">
   <header class="home-head">
-    <h1 class="brand">一起写好字</h1>
+    <h1 class="brand">一年级写字</h1>
     <p class="brand-sub">跟着笔顺，一笔一笔写</p>
     <div class="overall" id="overallProgress"></div>
     <button class="who-switch" id="whoSwitch" type="button" hidden></button>
@@ -76,6 +76,7 @@
       <div id="writerTarget" class="writer-target"></div>
       <div class="stamp" id="stamp" hidden><span>优</span></div>
     </div>
+    <button class="say-btn" id="sayBtn" type="button" hidden><span aria-hidden="true">🔊</span> 听读音</button>
     <p class="coach" id="coachText"></p>
   </div>
 

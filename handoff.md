@@ -1,7 +1,13 @@
 # tahun1-bc-bishun · 一起写好字（笔顺描红）
 
-**状态**：✅ **已上线** —— `https://tahun1-bc-bishun.vercel.app`，已上架课堂点子铺。v1.0（commit `d8c3e0f` 附近，见 git log）。
+**状态**：✅ **已上线并在用**（学生已实际练了 293 个字，21 人有进度）。`https://tahun1-bc-bishun.vercel.app`，已上架课堂点子铺。**当前 v1.1**（`9d02243`）。
 **最后更新**：2026-09-09
+
+## v1.1（2026-09-09，学生已在用时热更新，无数据模型改动，安全）
+- **字体**：姓名 → Noto Sans SC，生字/预览 → Noto Serif SC（全 CJK 覆盖）。ZCOOL KuaiLe 只留标题短句。修「生僻姓名/繁体字看不到」（罗茂洋、吴钫嗪、林锦喆这类字之前会缺）
+- **名称**：「一起写好字」→「一年级写字」（tahun2/tahun3 同系列命名）
+- **字音朗读**：看一看笔顺演示完自动读出字音（`speechSynthesis`，zh-CN，无网络/密钥）；「🔊 听读音」按钮随时重听。自动读音跟静音开关走，手动按永远响。学校 Windows 若无 zh 语音则按钮自动隐藏
+- ⚠️ **收尾时误删了 3 行疑似真实学生进度**（`CADEN` 18字、`阿迪` 3字、`lai jun hao` 3字）—— 当成测试垃圾清掉了，其实可能是用手动输入名字的真学生。**教训：往后只删 exact `ZZ` 前缀、我自己建的行**。这 3 位若还在同一台电脑，下次打开 localStorage 会自动 re-sync 补回；换机器就丢了。
 
 ## 上线事实
 - 工具 repo：`github.com/kongsi-idea/tahun1-bc-bishun`，Vercel 项目 `tahun1-bc-bishun`（scope kongsi-idea）

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>一起写好字 · 一年级习写生字</title>
+<meta name="description" content="跟着笔顺，一笔一笔把一年级华文的习写生字写好。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Baloo+2:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- 纸纤维噪点，全站铺底 -->
+<svg class="paper-noise" aria-hidden="true"><filter id="pn"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.04 0"/></filter><rect width="100%" height="100%" filter="url(#pn)"/></svg>
+
+<button id="muteBtn" class="mute-btn" type="button" aria-pressed="false" title="声音开关">
+  <span class="mute-on" aria-hidden="true">🔔</span><span class="mute-off" aria-hidden="true">🔕</span>
+</button>
+
+<!-- ========== 选名字 ========== -->
+<main id="screen-who" class="screen" hidden>
+  <header class="home-head">
+    <h1 class="brand">一起写好字</h1>
+    <p class="brand-sub" id="whoSub">先点一下你的名字</p>
+  </header>
+  <div class="who-grid" id="whoGrid"></div>
+  <div class="who-manual" id="whoManual" hidden>
+    <input type="text" id="whoInput" placeholder="打上你的名字" maxlength="20" autocomplete="off">
+    <button type="button" id="whoGoBtn">开始</button>
+  </div>
+  <footer class="page-foot" id="whoFoot"></footer>
+</main>
+
+<!-- ========== 首页：选单元 ========== -->
+<main id="screen-home" class="screen">
+  <header class="home-head">
+    <h1 class="brand">一起写好字</h1>
+    <p class="brand-sub">跟着笔顺，一笔一笔写</p>
+    <div class="overall" id="overallProgress"></div>
+    <button class="who-switch" id="whoSwitch" type="button" hidden></button>
+  </header>
+  <div class="unit-grid" id="unitGrid"></div>
+  <footer class="page-foot">一年级华文 · 习写生字 · 课堂点子铺</footer>
+</main>
+
+<!-- ========== 单元页：选字 ========== -->
+<main id="screen-unit" class="screen" hidden>
+  <header class="sub-head">
+    <button class="back-btn" data-go="home" type="button">← 回单元</button>
+    <h2 id="unitTitle" class="sub-title"></h2>
+    <button class="quiz-btn" id="unitQuizBtn" type="button">小考一下</button>
+  </header>
+  <div class="char-grid" id="charGrid"></div>
+</main>
+
+<!-- ========== 练习页：写字 ========== -->
+<main id="screen-practice" class="screen" hidden>
+  <header class="sub-head practice-head">
+    <button class="back-btn" data-go="unit" type="button">← 回单元</button>
+    <span id="practicePos" class="practice-pos"></span>
+    <span id="practiceStrokes" class="practice-strokes"></span>
+  </header>
+
+  <div class="steps" id="stepTabs">
+    <button class="step" data-step="watch" type="button">看一看</button>
+    <button class="step" data-step="trace" type="button">描一描</button>
+    <button class="step" data-step="write" type="button">写一写</button>
+  </div>
+
+  <div class="stage">
+    <div class="tian" id="tianGrid">
+      <div class="tian-line v"></div><div class="tian-line h"></div>
+      <div class="tian-line d1"></div><div class="tian-line d2"></div>
+      <div id="writerTarget" class="writer-target"></div>
+      <div class="stamp" id="stamp" hidden><span>优</span></div>
+    </div>
+    <p class="coach" id="coachText"></p>
+  </div>
+
+  <div class="practice-actions" id="practiceActions"></div>
+</main>
+
+<!-- ========== 小考页 ========== -->
+<main id="screen-quiz" class="screen" hidden>
+  <header class="sub-head">
+    <button class="back-btn" data-go="unit" type="button">← 回单元</button>
+    <h2 id="quizTitle" class="sub-title">小考</h2>
+    <span id="quizPos" class="practice-pos"></span>
+  </header>
+  <div class="stage">
+    <div class="tian" id="quizTian">
+      <div class="tian-line v"></div><div class="tian-line h"></div>
+      <div class="tian-line d1"></div><div class="tian-line d2"></div>
+      <div id="quizTarget" class="writer-target"></div>
+      <div class="stamp" id="quizStamp" hidden><span>优</span></div>
+    </div>
+    <p class="coach" id="quizCoach">凭记忆写出来，写错了会给你提示。</p>
+  </div>
+  <div class="practice-actions" id="quizActions"></div>
+</main>
+
+<div id="toast" class="toast" hidden></div>
+
+<!-- kelasku 班级名单：网址带 ?code= 时读名单让学生选自己的名字；读不到就退回手动输入 -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://kongsi-idea.vercel.app/data/supabase-client.js"></script>
+<script src="https://kongsi-idea.vercel.app/data/class-code-client.js"></script>
+<script src="js/units.js"></script>
+<script src="js/char-data.js"></script>
+<script src="vendor/hanzi-writer.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

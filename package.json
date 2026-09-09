@@ -1,0 +1,17 @@
+{
+  "name": "tahun1-bc-bishun",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "hanzi-writer": "^3.7.0",
+    "hanzi-writer-data": "^2.0.1"
+  }
+}

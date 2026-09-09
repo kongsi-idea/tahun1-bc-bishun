@@ -1,7 +1,30 @@
 # tahun1-bc-bishun · 一起写好字（笔顺描红）
 
-**状态**：开发中 —— 首版完成并通过浏览器端到端测试；**卡在「学生名单」需求**（见文末），待老师给资料 + 定隐私方案后才继续，然后本机实测 → 部署。
+**状态**：✅ **已上线** —— `https://tahun1-bc-bishun.vercel.app`，已上架课堂点子铺。v1.0（commit `d8c3e0f` 附近，见 git log）。
 **最后更新**：2026-09-09
+
+## 上线事实
+- 工具 repo：`github.com/kongsi-idea/tahun1-bc-bishun`，Vercel 项目 `tahun1-bc-bishun`（scope kongsi-idea）
+- 正式网址 `https://tahun1-bc-bishun.vercel.app`，alias 已确认指向最新部署，favicon 内联无 404
+- Hub 已上架：`kongsi-idea/app.js` TOOLS 有条目，详情页「开始使用」→ 正式网址，4 张缩略图全 200，Hub console 0 error
+- **给学生用的网址**：`https://tahun1-bc-bishun.vercel.app/?code=JBC1037-1I`（1I）或 `?code=JBC1037-1G`（1G）
+  —— 不带 `?code=` 会弹一次代码输入框（记住），或退回手动输入名字（进度只存本机）
+- Supabase migration 已在线上 `gntnkhkkgonaehapcerr` 执行（table + RPC + RLS 只读 + unique index 全部验证）
+  - 连接方式：`pg` 走 `aws-0-ap-southeast-1.pooler.supabase.com:5432`，user `postgres.gntnkhkkgonaehapcerr`（密码在 `.secrets.local.md`）
+- **线上真实验证**：`?code=JBC1037-1I` 读到 35 人名单（1G 36 人）；RPC 逐字取较高状态合并、不降级；
+  live 工具练一个字 → 进度写进 `tahun1_bc_bishun_progress`；换电脑（清 localStorage）登入同名字 → 进度接回。
+  所有 ZZ 测试行已清，表现在 0 行。
+
+## 回滚
+- 工具：`cd teaching-tools/tahun1-bc-bishun && git revert HEAD~2..HEAD && git push && npx vercel deploy --prod --yes --scope kongsi-idea`
+  （或 `npx vercel rollback --scope kongsi-idea`）
+- Hub 下架：`kongsi-idea/app.js` 删掉 `tahun1-bc-bishun` 那个 TOOLS 条目 → commit/push → `vercel deploy --prod` + `vercel alias set <新url> kongsi-idea.vercel.app`
+- DB：`drop table public.tahun1_bc_bishun_progress cascade; drop function public.submit_tahun1_bc_bishun_progress(text,text,text,jsonb);`（会丢学生进度）
+
+## 待老师做
+- **电脑室真机实测**：Windows + Chrome，学校鼠标，学生实际描一遍。笔顺判定松紧（`leniency`）对一年级合不合适、三步流程会不会太长、音效音量——这些 headless 验不了，只有真机能确认
+- 给两班学生正确网址（带 `?code=`）；建议在电脑室机器上存成书签
+- 「老师看全班进度」入口还没做（数据在 `tahun1_bc_bishun_progress`，anon 可读）——要的话之后在 kelasku 加总览页或工具加 `?board=1`
 
 ## 已验证（Playwright 真实鼠标输入，1470 与 1024 视口）
 - 首页 27 单元卡渲染、进度环、overall 计数

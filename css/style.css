@@ -278,6 +278,17 @@ body{
 
 /* ---------- 舞台 / 田字格 ---------- */
 .stage{display:flex;flex-direction:column;align-items:center;gap:14px}
+
+/* ---------- 拼音标注（定音词朗读同一份数据来源，见 js/pinyin-data.js） ---------- */
+.pinyin-tag{
+  display:inline-flex;align-items:baseline;gap:8px;
+  padding:6px 18px;border-radius:999px;margin-bottom:-2px;
+  background:linear-gradient(180deg,var(--paper-1),var(--paper-2));
+  box-shadow:0 2px 4px rgba(60,40,20,.16), inset 0 0 0 2px rgba(162,118,31,.28);
+  font-family:var(--font-brush);font-size:20px;color:var(--ink);
+}
+.pinyin-tag:empty{display:none}
+.pinyin-tag .py{font-family:var(--font-num);font-weight:600;font-size:16px;color:var(--jade-2)}
 .tian{
   position:relative;
   width:min(74vw,min(58vh,460px));height:min(74vw,min(58vh,460px));
